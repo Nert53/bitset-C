@@ -1,0 +1,3 @@
+﻿  main.c
+C:\(D) data\Škola\Vejška\02 semestr\Základy programování 2 (C)\ZPC2_zapocet_02\ZPC2_zapocet_02\main.c(18,27): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
+  ZPC2_zapocet_02.vcxproj -> C:\(D) data\Škola\Vejška\02 semestr\Základy programování 2 (C)\ZPC2_zapocet_02\x64\Debug\ZPC2_zapocet_02.exe
