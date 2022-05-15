@@ -5,6 +5,7 @@
 
 typedef struct bitset {
 	size_t size;
+	size_t relative_size;
 	unsigned char *set;
 } Bitset;
 
@@ -28,7 +29,8 @@ Bitset* create_bitset(size_t size) {
 		new_set->set[i] = 0;
 	}
 
-	new_set->size = edited_size;
+	new_set->size = size;
+	new_set->relative_size = edited_size;
 	return new_set;
 }
 
@@ -40,7 +42,7 @@ Bitset* create_bitset_with_values(size_t size, const int* values, size_t array_s
 	}
 
 	int end_pos = 0;
-	for (int j = 0; j < new_set->size; j++) {
+	for (int j = 0; j < new_set->relative_size; j++) {
 		int start_element = (j * 8);
 		if (start_element != 0) {
 			start_element--;
@@ -70,7 +72,7 @@ Bitset* create_bitset_with_range(size_t size, int upto) {
 	int end_pos = 0;
 	int sequence = 0;
 
-	for (int j = 0; j < new_set->size; j++) {
+	for (int j = 0; j < new_set->relative_size; j++) {
 		int start_element = (j * 8);
 		if (start_element != 0) {
 			start_element--;
@@ -119,14 +121,54 @@ int contains(Bitset* bitset, int element) {
 	}
 }
 
+int set_expand(Bitset* set, size_t new_size, int start) {
+	set->set = (char*)realloc(set->set, new_size);
+	if (!set->set) {
+		free(set->set);
+		return 1;
+	}
+
+	for (int i = start; i < set->relative_size; i++) {
+		set->set[i] = 0;
+	}
+	return 0;
+}
+
+void form_intersection(Bitset* left, Bitset* right) {
+	if (left->size < right->size) {
+		int start = right->relative_size - left->relative_size;
+
+		left->size = right->size;
+		left->relative_size = right->relative_size;
+
+		int expand = set_expand(left, left->relative_size, start);
+		if (expand == 1) {
+			return;
+		}
+	}
+
+	if (left->relative_size > right->relative_size) {
+		for (int i = 0; i < right->relative_size; i++) {
+			left->set[i] = left->set[i] & right->set[i];
+		}
+		for (int j = right->relative_size; j < left->relative_size; j++) {
+			left->set[j] = 0;
+		}
+	}
+	else {
+		for (int i = 0; i < left->relative_size; i++) {
+			left->set[i] = left->set[i] & right->set[i];
+		}
+	}
+}
+
 int main() {
-	int values_arr[] = { 1, 3, 6, 10, 12, 15};
-	Bitset* new_set = create_bitset(16);
-	set_insert(new_set, 12);
-	set_insert(new_set, 1);
-	contains(new_set, 12);
-	set_remove(new_set, 12);
-	contains(new_set, 12);
+	int A[] = { 1, 3, 5 };
+	int B[] = { 2, 3, 5, 10, 11, 15 };				// 3, 5
+	Bitset* set_A = create_bitset_with_values(6, A, 3);
+	Bitset* set_B = create_bitset_with_values(16, B, 6);
+
+	form_intersection(set_B, set_A);
 
 	return 0;
 }
