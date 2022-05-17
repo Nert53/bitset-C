@@ -3,6 +3,9 @@
 #include <math.h>
 //#include "bitset.h"
 
+#define AND(a, b) a & b
+#define OR(a, b) a | b
+
 typedef struct bitset {
 	size_t size;
 	size_t relative_size;
@@ -134,6 +137,20 @@ int set_expand(Bitset* set, size_t new_size, int start) {
 	return 0;
 }
 
+char bitwise_and(char a, char b) {
+	return (a & b);
+}
+
+char bitwise_or(char a, char b) {
+	return (a | b);
+}
+
+void form_operation(Bitset* left, Bitset* right, char (*bitwise_operation)(char, char)) {
+	for (int i = 0; i < right->relative_size; i++) {
+		left->set[i] = bitwise_operation(left->set[i], right->set[i]);
+	}
+}
+
 void form_intersection(Bitset* left, Bitset* right) {
 	if (left->size < right->size) {
 		int start = right->relative_size - left->relative_size;
@@ -147,19 +164,7 @@ void form_intersection(Bitset* left, Bitset* right) {
 		}
 	}
 
-	if (left->relative_size > right->relative_size) {
-		for (int i = 0; i < right->relative_size; i++) {
-			left->set[i] = left->set[i] & right->set[i];
-		}
-		for (int j = right->relative_size; j < left->relative_size; j++) {
-			left->set[j] = 0;
-		}
-	}
-	else {
-		for (int i = 0; i < left->relative_size; i++) {
-			left->set[i] = left->set[i] & right->set[i];
-		}
-	}
+	form_operation(left, right, bitwise_and);
 }
 
 Bitset* set_intersection(Bitset* left, Bitset* right) {
@@ -189,13 +194,17 @@ Bitset* set_intersection(Bitset* left, Bitset* right) {
 	return create_bitset_with_values(new_size, values, arr_size);
 }
 
+void form_union(Bitset* left, Bitset* right) {
+	form_operation(left, right, bitwise_or);
+}
+
 int main() {
 	int A[] = { 1, 3, 5, 12, 14, 15 };
 	int B[] = { 2, 3, 5, 10, 12, 15 };				// 3, 5, 12, 15
 	Bitset* set_A = create_bitset_with_values(16, A, 6);
 	Bitset* set_B = create_bitset_with_values(16, B, 6);
 
-	Bitset* set = set_intersection(set_A, set_B);
+	form_union(set_A, set_B); // 1, 2, 3, 5, 10 , 12, 14, 15
 
 	return 0;
 }
