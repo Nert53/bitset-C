@@ -162,13 +162,40 @@ void form_intersection(Bitset* left, Bitset* right) {
 	}
 }
 
+Bitset* set_intersection(Bitset* left, Bitset* right) {
+	size_t new_size = min(left->size, right->size);
+	size_t new_edited_size = ceil((double)new_size / 8);
+
+	int *values = (int*)malloc(new_edited_size * sizeof(int));
+	if (!values) {
+		free(values);
+		return NULL;
+	}
+
+	int arr_size = 0;
+	for (int i = 0; i < new_edited_size; i++) {
+		char temp_left = left->set[i];
+		char temp_right = right->set[i];
+		for (int j = 0; j < 8; j++) {
+			if ((temp_left & 0x01) & (temp_right & 0x01)) {
+				values[arr_size] = (i * 8) + j;
+				arr_size++;
+			}
+			temp_left  = temp_left >> 1;
+			temp_right = temp_right >> 1;
+		}
+	}
+	
+	return create_bitset_with_values(new_size, values, arr_size);
+}
+
 int main() {
-	int A[] = { 1, 3, 5 };
-	int B[] = { 2, 3, 5, 10, 11, 15 };				// 3, 5
-	Bitset* set_A = create_bitset_with_values(6, A, 3);
+	int A[] = { 1, 3, 5, 12, 14, 15 };
+	int B[] = { 2, 3, 5, 10, 12, 15 };				// 3, 5, 12, 15
+	Bitset* set_A = create_bitset_with_values(16, A, 6);
 	Bitset* set_B = create_bitset_with_values(16, B, 6);
 
-	form_intersection(set_B, set_A);
+	Bitset* set = set_intersection(set_A, set_B);
 
 	return 0;
 }
