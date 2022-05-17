@@ -3,9 +3,6 @@
 #include <math.h>
 //#include "bitset.h"
 
-#define AND(a, b) a & b
-#define OR(a, b) a | b
-
 typedef struct bitset {
 	size_t size;
 	size_t relative_size;
@@ -145,6 +142,10 @@ char bitwise_or(char a, char b) {
 	return (a | b);
 }
 
+char bitwise_substraction(char a, char b) {
+	return ((~b & a) & (b ^ a));
+}
+
 void form_operation(Bitset* left, Bitset* right, char (*bitwise_operation)(char, char)) {
 	for (int i = 0; i < right->relative_size; i++) {
 		left->set[i] = bitwise_operation(left->set[i], right->set[i]);
@@ -167,11 +168,11 @@ void form_intersection(Bitset* left, Bitset* right) {
 	form_operation(left, right, bitwise_and);
 }
 
-Bitset* set_intersection(Bitset* left, Bitset* right) {
-	size_t new_size = min(left->size, right->size);
+Bitset* set_operation(Bitset* left, Bitset* right, char (*bitwise_operation)(char, char)) {
+	size_t new_size = max(left->size, right->size);
 	size_t new_edited_size = ceil((double)new_size / 8);
 
-	int *values = (int*)malloc(new_edited_size * sizeof(int));
+	int* values = (int*)malloc(new_edited_size * sizeof(int));
 	if (!values) {
 		free(values);
 		return NULL;
@@ -182,29 +183,47 @@ Bitset* set_intersection(Bitset* left, Bitset* right) {
 		char temp_left = left->set[i];
 		char temp_right = right->set[i];
 		for (int j = 0; j < 8; j++) {
-			if ((temp_left & 0x01) & (temp_right & 0x01)) {
+			if (bitwise_operation((temp_left & 0x01), (temp_right & 0x01))) {
 				values[arr_size] = (i * 8) + j;
 				arr_size++;
 			}
-			temp_left  = temp_left >> 1;
+			temp_left = temp_left >> 1;
 			temp_right = temp_right >> 1;
 		}
 	}
-	
+
 	return create_bitset_with_values(new_size, values, arr_size);
 }
 
-void form_union(Bitset* left, Bitset* right) {
+Bitset* set_intersection(Bitset* left, Bitset* right) {
+	return set_operation(left, right, bitwise_and);
+}
+
+void form_union(Bitset *left, Bitset *right) {
 	form_operation(left, right, bitwise_or);
 }
 
+Bitset* set_union(Bitset *left, Bitset *right) {
+	return set_operation(left, right, bitwise_or);
+}
+
+void form_difference(Bitset* left, Bitset* right) {
+	return form_operation(left, right, bitwise_substraction);
+}
+
+Bitset* set_difference(Bitset* left, Bitset* right) {
+	return NULL;
+}
+
 int main() {
-	int A[] = { 1, 3, 5, 12, 14, 15 };
-	int B[] = { 2, 3, 5, 10, 12, 15 };				// 3, 5, 12, 15
-	Bitset* set_A = create_bitset_with_values(16, A, 6);
-	Bitset* set_B = create_bitset_with_values(16, B, 6);
+	char res = bitwise_substraction(40, 25);
+	int A[] = { 3, 5 };
+	int B[] = { 0, 3, 4 };				// 3, 5, 12, 15
+	Bitset* set_A = create_bitset_with_values(6, A, 2);
+	Bitset* set_B = create_bitset_with_values(5, B, 3);
 
 	form_union(set_A, set_B); // 1, 2, 3, 5, 10 , 12, 14, 15
+	Bitset* set = set_union(set_A, set_B);
 
 	return 0;
 }
