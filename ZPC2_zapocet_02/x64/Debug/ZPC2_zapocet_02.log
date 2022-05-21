@@ -1,5 +1,12 @@
 ﻿  main.c
-C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(19,27): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
-C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(157,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(173,31): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(16,21): warning C4047: '=': 'unsigned char' differs in levels of indirection from 'void *'
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(17,16): warning C4022: 'free': pointer mismatch for actual parameter 1
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(19,10): warning C4022: 'free': pointer mismatch for actual parameter 1
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(20,10): warning C4022: 'free': pointer mismatch for actual parameter 1
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(31,27): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(182,36): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(222,31): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(233,31): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(239,58): warning C4098: 'form_difference': 'void' function returning a value
+C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\ZPC2_zapocet_02\main.c(244,31): warning C4244: 'initializing': conversion from 'double' to 'size_t', possible loss of data
   ZPC2_zapocet_02.vcxproj -> C:\(D) data\school\upol\02_semestr\zpc_2\zapocet_02\x64\Debug\ZPC2_zapocet_02.exe
