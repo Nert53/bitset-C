@@ -274,14 +274,71 @@ int is_subset(Bitset* left, Bitset* right) {
 	return 1;
 }
 
+int digits_of_int(int number) {
+	int count = 1;
+	number = number / 10;
+
+	while (number != 0)
+	{
+		number = number / 10;
+		count++;
+	}
+
+	return count;
+}
+
+int save_bitsets_to_file(char* file, Bitset** bitsets, size_t bitsets_count) {
+	/*
+	 * Funkce vrací 0 pokud se zápis zdaøil, jinak vrací jednu z následujících hodnot
+	 * 1 - Soubor se nepovedlo otevøít
+	 * 2 - Nebylo moné zapsat hodnoty do souboru
+	 * 3 - Soubor se nepovedlo uzavøít
+	 */
+
+	FILE* new_file = fopen(file, "w");
+	if (!new_file) {
+		return 1;
+	}
+	
+	for (int i = 0; i < bitsets_count; i++) {
+		Bitset* current_bitset = bitsets[i];
+		for (int j = 0; j < current_bitset->relative_size; j++) {
+			char temp = current_bitset->set[j];
+			for (int k = 0; k < CHAR_BITS; k++) {
+				if ((temp & 0x01) == 1) {
+					int num_to_write = (j * 8) + k;
+					char* converted_num = (char*)malloc(sizeof(char) * digits_of_int(num_to_write));
+					if (!converted_num) {
+						return 2;
+					}
+					itoa(num_to_write, converted_num, 10);
+					fputs(converted_num, new_file);
+				}
+				temp = temp >> 1;
+			}
+		}
+		fprintf(new_file, "\n");
+	}
+
+
+	if (fclose(new_file) == EOF) {
+		return 3;
+	}
+
+	return 0;
+}
+
 int main() {
 	char res = bitwise_substraction(40, 25);
-	int A[] = { 3, 5, 6 };
-	int B[] = { 3, 5, 6 };				// B - A : 0, 4						A - B : 8, 10, 12, 13
-	Bitset* set_A = create_bitset_with_values(20, A, 3);
-	Bitset* set_B = create_bitset_with_values(7, B, 3);
 
-	is_subset(set_A, set_B);
+	int A[] = { 5, 6, 8 };
+	int B[] = { 0, 2, 3 };				// B - A : 0, 4						A - B : 8, 10, 12, 13
+	Bitset* set_A = create_bitset_with_values(9, A, 3);
+	Bitset* set_B = create_bitset_with_values(4, B, 3);
+
+	Bitset* bitsets_array[] = {set_B, set_A};
+
+	save_bitsets_to_file("sets.txt", bitsets_array, 2);
 
 	return 0;
 }

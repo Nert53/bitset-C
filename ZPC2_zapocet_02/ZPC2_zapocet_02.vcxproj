@@ -140,10 +140,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="bitset.c" />
-    <ClCompile Include="main.c" />
+    <ClCompile Include="main.c">
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SDLCheck>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitset.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="sets.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
