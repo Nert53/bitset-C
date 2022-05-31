@@ -21,6 +21,9 @@
     <ClCompile Include="bitset.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="main_final.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitset.h">
@@ -29,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="sets.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="load_sets.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>

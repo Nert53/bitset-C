@@ -6,8 +6,11 @@
 
 typedef struct bitset {
 	size_t size;
-	unsigned char set_a[];
+	size_t relative_size;
+	unsigned char* set;
 } Bitset;
+
+free_bitset(Bitset* set);
 
 #endif // !BITSET_H
 

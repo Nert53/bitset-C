@@ -49,33 +49,35 @@ Bitset* set_difference(Bitset *left, Bitset *right);
 // Test podmnoziny vraci 1 pokud je left podmnozinou right jinak 0.
 int is_subset(Bitset *left, Bitset *right);
 ```
-Pokud operace obdrží různě velké množiny jako svoje argumenty, tak se funkce zachovají následovně. V případě funkcí form_intersection, form_union a form_difference platí, že velikost množiny left pouze zvětšujeme pokud je v pravidlech, že se má množina zmenšit, tak to platí pouze pro funkce vracející novou množinu.
+Pokud operace obdrží různě velké množiny jako svoje argumenty, tak se funkce zachovají následovně. V případě funkcí `form_intersection`, `form_union` a `form_difference` platí, že velikost množiny left pouze zvětšujeme pokud je v pravidlech, že se má množina zmenšit, tak to platí pouze pro funkce vracející novou množinu.
 
 - ***Průnik*** - Pokud je jedna, množina větší, pak výsledek bude mít velikost menší množiny.
 - ***Sjednocení*** - Pokud je jedna množina menší, pak výsledek bude mít velikost větší množiny
-- ***Rozdíl*** - Pokud size(left) > size(right), pak vysledek ma velikost size(left). Pokud size(left) < size(right), pak je velikost výsledku size(left).
+- ***Rozdíl*** - Pokud size(left) > size(right), pak vysledek má velikost size(left). Pokud size(left) < size(right), pak je velikost výsledku size(left).
 
-Práce se soubory
-Funkce load_bitset_if musí být schopna zpracovat libovolně velké soubory. Příklad takového souboru si můžete stáhnout zde (soubor bude dodán). Množiny jsou v souboru uložené ve formátu fimi (viz příklad).
+#### Práce se soubory
+
+Funkce `load_bitset_if` musí být schopna zpracovat libovolně velké soubory..
 
 
-    // Mějme množinu A = {1, 3, 5, 7, 9, 20}
-    // Do souboru ji zapišeme takto:
-    1 3 5 7 9 20
+```c
+// Mějme množinu A = {1, 3, 5, 7, 9, 20}
+// Do souboru ji zapišeme takto:
+1 3 5 7 9 2
+```
 
-    
-    // Ulozi pole mnozin do souboru kde kazda mnozina je na jednom radku
-    // Funkce vrací 0 pokud se zápis zdařil, jinak vrací jednu z následujících hodnot
-    // 1 - Soubor se nepovedlo otevřít
-    // 2 - Nebylo možné zapsat hodnoty do souboru
-    // 3 - Soubor se nepovedlo uzavřít
-    // Řešení tšchto chybových stavů nechám na Vás ale dbejte na to abych musek co nejméně hledat 
-    // ve zdrojovém kódu která chyba je reprezetnována jakým číslem. 
-    int save_bitsets_to_file(char *file, Bitset **bitsets, size_t bitsets_count)
-    
-    // Nacte n mnozin ze souboru ulozenych funkci save_bitsets_to_file
-    Bitset** load_bitsets(char *file)
-    
-    // Nacte ze souboru pouze mnoziny splnujici predikat condition
-    // Pokud se načítání množin nezdaří, tak funkce vrací NULL.
-    Bitset** load_bitsets_if(int (*condition)(Bitset*), char *file);
+```c
+// Ulozi pole mnozin do souboru kde kazda mnozina je na jednom radku
+// Funkce vrací 0 pokud se zápis zdařil, jinak vrací jednu z následujících hodnot
+// 1 - Soubor se nepovedlo otevřít
+// 2 - Nebylo možné zapsat hodnoty do souboru
+// 3 - Soubor se nepovedlo uzavřít 
+int save_bitsets_to_file(char *file, Bitset **bitsets, size_t bitsets_count)
+
+// Nacte n mnozin ze souboru ulozenych funkci save_bitsets_to_file
+Bitset** load_bitsets(char *file)
+
+// Nacte ze souboru pouze mnoziny splnujici predikat condition
+// Tato funkce neni soucasti reseni (!)
+Bitset** load_bitsets_if(int (*condition)(Bitset*), char *file);
+```

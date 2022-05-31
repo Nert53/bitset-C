@@ -143,11 +143,13 @@
     <ClCompile Include="main.c">
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SDLCheck>
     </ClCompile>
+    <ClCompile Include="main_final.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitset.h" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="load_sets.txt" />
     <Text Include="sets.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
