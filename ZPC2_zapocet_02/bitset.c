@@ -1,6 +1,13 @@
+ï»¿/* Vojtecn Netrh R21412 - may 2022 */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "bitset.h"
+
+#define MAX_NUM_DIGITS 20
+#define MAX_LINE_LEN 500
+
+#define edit_size(size) (((size) + ((size) % CHAR_BIT)) / CHAR_BIT)
 
 void free_bitset(Bitset* set) {
 	for (int i = 0; i < set->size; i++) {
@@ -9,7 +16,6 @@ void free_bitset(Bitset* set) {
 	}
 	free(set->size);
 	free(set->relative_size);
-
 }
 
 Bitset* create_bitset(size_t size) {
@@ -150,10 +156,7 @@ char bitwise_substraction(char a, char b) {
 }
 
 int bitwise_subset_test(char a, char b) {
-	/*
-	 * A is a subset of B
-	 * alternatively we can use '(a & b) == a'
-	*/
+	/* A is a subset of B (alternatively we can use '(a & b) == a) */
 	if (bitwise_or(a, b) == b) {
 		return 1;
 	}
@@ -221,7 +224,7 @@ void form_union(Bitset* left, Bitset* right) {
 
 Bitset* set_union(Bitset* left, Bitset* right) {
 	size_t new_size = max(left->size, right->size);
-	size_t new_edited_size = ceil((double)new_size / CHAR_BIT);
+	size_t new_edited_size = edit_size(new_size);
 
 	return set_operation(left, right, new_size, new_edited_size, bitwise_or);
 }
@@ -232,7 +235,7 @@ void form_difference(Bitset* left, Bitset* right) {
 
 Bitset* set_difference(Bitset* left, Bitset* right) {
 	size_t new_size = left->size;
-	size_t new_edited_size = ceil((double)new_size / CHAR_BIT);
+	size_t new_edited_size = edit_size(new_size);
 
 	return set_operation(left, right, new_size, new_edited_size, bitwise_substraction);
 }
@@ -280,13 +283,6 @@ int digits_of_int(int number) {
 }
 
 int save_bitsets_to_file(char* file, Bitset** bitsets, size_t bitsets_count) {
-	/*
-	 * Funkce vrací 0 pokud se zápis zdaøil, jinak vrací jednu z následujících hodnot
-	 * 1 - Soubor se nepovedlo otevøít
-	 * 2 - Nebylo možné zapsat hodnoty do souboru
-	 * 3 - Soubor se nepovedlo uzavøít
-	 */
-
 	FILE* new_file = fopen(file, "w");
 	if (!new_file) {
 		return 1;
@@ -305,14 +301,13 @@ int save_bitsets_to_file(char* file, Bitset** bitsets, size_t bitsets_count) {
 					}
 					itoa(num_to_write, converted_num, 10);
 					fputs(converted_num, new_file);
-					fputc(" ", new_file);
+					fputc(' ', new_file);
 				}
 				temp = temp >> 1;
 			}
 		}
 		fprintf(new_file, "\n");
 	}
-
 
 	if (fclose(new_file) == EOF) {
 		return 3;
@@ -321,29 +316,12 @@ int save_bitsets_to_file(char* file, Bitset** bitsets, size_t bitsets_count) {
 	return 0;
 }
 
-Bitset** load_bitsets(char* file) {
-	FILE* read_file = fopen(file, "r");
-	if (!read_file) {
-		return NULL;
-	}
-
-	char* line = (char*)malloc(sizeof(char) * 100);
-	if (!line) {
-		free(line);
-		return NULL;
-	}
-	fgets(line, 100, read_file);
-	int* numbers = (int*)malloc(sizeof(int) * (strlen(line) / 2));
-	if (!numbers) {
-		free(numbers);
-		return NULL;
-	}
-
+int* convert_line_to_int(char* current_line, int* numbers) {
 	int i = 0, pos = 0, j = 0;
-	char temp[20];
-	for (int i = 0; i < strlen(line); i++) {
-		if (line[i] != ' ' && line[i] != '\n') {
-			temp[j] = line[i];
+	char temp[MAX_NUM_DIGITS];
+	for (int i = 0; i < strlen(current_line); i++) {
+		if (current_line[i] != ' ' && current_line[i] != '\n') {
+			temp[j] = current_line[i];
 			j++;
 		}
 		else {
@@ -357,4 +335,67 @@ Bitset** load_bitsets(char* file) {
 			j = 0;
 		}
 	}
+
+	Help_nums* result = (Help_nums*)malloc(sizeof(Help_nums));
+	if (!result) {
+		free(result);
+		return NULL;
+	}
+	result->numbers = numbers;
+	result->pos = pos;
+
+	return result;
+}
+
+void extend_arr(Bitset** arr, int new_size) {
+	Bitset** temp = realloc(arr, new_size);
+	if (!temp) {
+		free(temp);
+		return NULL;
+	}
+	arr = temp;
+}
+
+Bitset** load_bitsets(char* file) {
+	FILE* read_file = fopen(file, "r");
+	if (!read_file) {
+		return NULL;
+	}
+
+	char* line = (char*)malloc(sizeof(char) * MAX_LINE_LEN);
+	if (!line) {
+		free(line);
+		return NULL;
+	}
+
+	Bitset** result_arr = (Bitset*)malloc(sizeof(Bitset*) * 10);
+	if (!result_arr) {
+		free(result_arr);
+		return NULL;
+	}
+
+	int line_count = 0;
+	while (fgets(line, MAX_LINE_LEN, read_file) != NULL) {
+		int* numbers = (int*)malloc(sizeof(int) * (strlen(line) / 2));
+		if (!numbers) {
+			free(numbers);
+			return NULL;
+		}
+
+		Help_nums* temp = convert_line_to_int(line, numbers);
+		if (temp->pos != 0) {
+			result_arr[line_count] = create_bitset_with_values(numbers[temp->pos - 1] + 1, numbers, temp->pos);
+			free(numbers);
+		}
+
+		line_count++;
+		if (line_count > 10) {
+			extend_arr(result_arr, line_count * 2);
+		}
+	}
+	if (fclose(read_file) == EOF) {
+		return NULL;
+	}
+	
+	return result_arr;
 }
