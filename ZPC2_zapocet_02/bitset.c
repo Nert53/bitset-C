@@ -11,8 +11,8 @@
 
 void free_bitset(Bitset* set) {
 	for (int i = 0; i < set->size; i++) {
-		set->set[i] = NULL;
 		free(set->set[i]);
+		set->set[i] = NULL;
 	}
 	free(set->size);
 	free(set->relative_size);
@@ -20,6 +20,7 @@ void free_bitset(Bitset* set) {
 
 Bitset* create_bitset(size_t size) {
 	Bitset* new_set = (Bitset*)malloc(sizeof(Bitset));
+	check_alloc(new_set);
 	if (!new_set) {
 		free_bitset(new_set);
 		return NULL;
@@ -282,10 +283,27 @@ int digits_of_int(int number) {
 	return count;
 }
 
+int error_print(int err_type) {
+		switch (err_type) {
+		case 1:
+			printf("error %i: The file could not be opened", err_type);
+			return 1;
+		case 2:
+			printf("error %i: Could not write values ​​to file", err_type);
+			return 2;
+		case 3:
+			printf("error %i: The file could not be closed", err_type);
+			return 3;
+		default:
+			printf("error 4: Unspecified problem");
+			return 4;
+	}
+}
+
 int save_bitsets_to_file(char* file, Bitset** bitsets, size_t bitsets_count) {
 	FILE* new_file = fopen(file, "w");
 	if (!new_file) {
-		return 1;
+		error_print(1);
 	}
 
 	for (int i = 0; i < bitsets_count; i++) {
@@ -297,7 +315,7 @@ int save_bitsets_to_file(char* file, Bitset** bitsets, size_t bitsets_count) {
 					int num_to_write = (j * 8) + k;
 					char* converted_num = (char*)malloc(sizeof(char) * digits_of_int(num_to_write));
 					if (!converted_num) {
-						return 2;
+						error_print(2);
 					}
 					itoa(num_to_write, converted_num, 10);
 					fputs(converted_num, new_file);
@@ -310,7 +328,7 @@ int save_bitsets_to_file(char* file, Bitset** bitsets, size_t bitsets_count) {
 	}
 
 	if (fclose(new_file) == EOF) {
-		return 3;
+		error_print(3);
 	}
 
 	return 0;
